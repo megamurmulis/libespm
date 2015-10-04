@@ -2,6 +2,21 @@
 
 A free software library for reading and writing .esp and .esm plugin files.
 
+## WHAT THIS IS?
+
+A fork of `libespm` by <a href="https://github.com/WrinklyNinja/libespm">WrinklyNinja</a>, based on most recent <a href="https://github.com/WrinklyNinja/libespm/commit/fe6b7b8540d79b223646dbe183f6f89af6475aa0">commit</a> (2014-Dec-28).
+
+I have <b>rolled back some unnecessary changes made by author which prevented `libespm` from being compiled on VS2010</b>, therefore also prevented from using Windows XP as developer platform (VS2012 requires Windows 7 SP1)..
+
+Original `libespm` was changed to use C++ 11 <a href="https://msdn.microsoft.com/en-ca/library/vstudio/hh567368.aspx">`Range-Based For Loop`</a> in multiple places during 2 commits (2014-Jun-21):
+* <a href="https://github.com/WrinklyNinja/libespm/commit/192ec639cde0367e06c6a26a38b79bd27e50fc71">First set of C++11 changes</a>
+* <a href="https://github.com/WrinklyNinja/libespm/commit/811499369dcdb49eac0250b1fa6f30aee62d024a">Another batch of C++11 changes.</a>.
+
+Those changes were just for convenience placing artifical limit on usage..
+
+So this forked version <b>can now be used in VS2010 - using Windows XP development platform</b>.<br>
+Though it (likelly) will not compile in older versions like VS2008, due other C++ 11 changes..
+
 ## Introduction
 
 Libespm can currently read data from plugins for the following games:
