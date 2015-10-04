@@ -51,26 +51,26 @@ namespace espm {
 
                 std::vector<std::string> getMasters() const {
                     std::vector<std::string> masters;
-                    for (const auto &field : fields) {
-                        if (strncmp(field.type, "MAST", 4) == 0)
-                            masters.push_back(MAST(field).getString());
+                    for(size_t i=0,max=fields.size(); i < max; ++i) {
+                        if (strncmp(fields[i].type,"MAST", 4) == 0)
+                            masters.push_back(MAST(fields[i]).getString());
                     }
                     return masters;
                 }
 
                 std::string getDescription() const {
-                    for (const auto &field : fields) {
-                        if (strncmp(field.type, "HEDR", 4) == 0) {
-                            return HEDR(field).getDescription();
+                    for(size_t i=0,max=fields.size(); i < max; ++i) {
+                        if (strncmp(fields[i].type,"SNAM", 4) == 0) {
+                            return HEDR(fields[i]).getDescription();
                         }
                     }
                     return "";
                 }
 
                 uint32_t getNumRecords() const {
-                    for (const auto &field : fields) {
-                        if (strncmp(field.type, "HEDR", 4) == 0) {
-                            return HEDR(field).getNumRecords();
+                    for(size_t i=0,max=fields.size(); i < max; ++i) {
+                        if (strncmp(fields[i].type,"HEDR", 4) == 0) {
+                            return HEDR(fields[i]).getNumRecords();
                         }
                     }
                     return 0;

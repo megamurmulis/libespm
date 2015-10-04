@@ -121,8 +121,8 @@ namespace espm {
 
         std::vector<uint32_t> getFormIDs() {
             std::vector<uint32_t> formids;
-            for (const auto &group : groups) {
-                std::vector<uint32_t> fids(group.getFormIDs());
+            for (int i=0,max=groups.size(); i < max; ++i) {
+                std::vector<uint32_t> fids = groups[i].getFormIDs();
                 formids.insert(formids.end(), fids.begin(), fids.end());
             }
             for (size_t i = 1, max = records.size(); i < max; ++i) {  //Skip the first record, since it has a FormID of zero (it's the TES4 record).
@@ -132,16 +132,16 @@ namespace espm {
         }
 
         bool getRecordByFieldData(char * type, char * data, uint32_t dataSize, Record& outRecord, const Settings& settings) const {
-            for (const auto &group : groups) {
-                if (group.getRecordByFieldData(type, data, dataSize, outRecord, settings))
+            for (int i=0,max=groups.size(); i < max; ++i) {
+                if (groups[i].getRecordByFieldData(type, data, dataSize, outRecord, settings))
                     return true;
             }
-            for (const auto &record : records) {
-                for (const auto &field : record.fields) {
-                    if (field.dataSize == dataSize
-                        && strncmp(field.type, type, settings.group.type_len) == 0
-                        && memcmp(field.data, data, dataSize) == 0) {
-                        outRecord = record;
+            for (std::vector<Record>::const_iterator it=records.begin(),endIt=records.end(); it != endIt; ++it) {
+                for (std::vector<Field>::const_iterator jt=it->fields.begin(), endjt=it->fields.end(); jt != endjt; ++jt) {
+                    if (jt->dataSize == dataSize
+                     && strncmp(jt->type, type, settings.group.type_len) == 0
+                     && memcmp(jt->data, data, dataSize) == 0) {
+                        outRecord = *it;
                         return true;
                     }
                 }
@@ -150,22 +150,22 @@ namespace espm {
         }
 
         std::vector<Record> getRecords() const {
-            std::vector<Record> recs(records);
-            for (const auto &group : groups) {
-                std::vector<Record> g_recs(group.getRecords());
+            std::vector<Record> recs = records;
+            for (int i=0,max=groups.size(); i < max; ++i) {
+                std::vector<Record> g_recs = groups[i].getRecords();
                 recs.insert(recs.end(), g_recs.begin(), g_recs.end());
             }
             return records;
         }
 
         bool getRecordByID(uint32_t id, Record& outRecord) const {
-            for (const auto &group : groups) {
-                if (group.getRecordByID(id, outRecord))
+            for (int i=0,max=groups.size(); i < max; ++i) {
+                if (groups[i].getRecordByID(id, outRecord))
                     return true;
             }
-            for (const auto &record : records) {
-                if (record.id == id) {
-                    outRecord = record;
+            for (std::vector<Record>::const_iterator it=records.begin(),endIt=records.end(); it != endIt; ++it) {
+                if (it->id == id) {
+                    outRecord = *it;
                     return true;
                 }
             }
@@ -173,9 +173,9 @@ namespace espm {
         }
 
         bool getGroupByType(char * type, Group& outGroup, const Settings& settings) const {
-            for (const auto &group : groups) {
-                if (strncmp(type, group.type, settings.group.type_len) == 0) {
-                    outGroup = group;
+            for (int i=0,max=groups.size(); i < max; ++i) {
+                if (strncmp(type, groups[i].type, settings.group.type_len) == 0) {
+                    outGroup = groups[i];
                     return true;
                 }
             }

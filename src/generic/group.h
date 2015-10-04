@@ -110,24 +110,24 @@ namespace espm {
 
         std::vector<uint32_t> getFormIDs() const {
             std::vector<uint32_t> formids;
-            for (const auto &subgroup : subgroups) {
-                std::vector<uint32_t> fids(subgroup.getFormIDs());
+            for (int i=0,max=subgroups.size(); i < max; ++i) {
+                std::vector<uint32_t> fids = subgroups[i].getFormIDs();
                 formids.insert(formids.end(), fids.begin(), fids.end());
             }
-            for (const auto &record : records) {
-                formids.push_back(record.id);
+            for (int i=0,max=records.size(); i < max; ++i) {
+                formids.push_back(records[i].id);
             }
             return formids;
         }
 
         bool getRecordByFieldData(char * type, char * data, uint32_t dataSize, Record& outRecord, const Settings& settings) const {
-            std::vector<Record> recs(getRecords());
-            for (const auto &record : recs) {
-                for (const auto &field : record.fields) {
-                    if (field.dataSize == dataSize
-                        && strncmp(field.type, type, settings.group.type_len) == 0
-                        && memcmp(field.data, data, dataSize) == 0) {
-                        outRecord = record;
+            std::vector<Record> recs = getRecords();
+            for (std::vector<Record>::const_iterator it=recs.begin(),endIt=recs.end(); it != endIt; ++it) {
+                for (std::vector<Field>::const_iterator jt=it->fields.begin(), endjt=it->fields.end(); jt != endjt; ++jt) {
+                    if (jt->dataSize == dataSize
+                     && strncmp(jt->type, type, settings.group.type_len) == 0
+                     && memcmp(jt->data, data, dataSize) == 0) {
+                        outRecord = *it;
                         return true;
                     }
                 }
@@ -136,19 +136,19 @@ namespace espm {
         }
 
         std::vector<Record> getRecords() const {
-            std::vector<Record> recs(records);
-            for (const auto &subgroup : subgroups) {
-                std::vector<Record> g_recs(subgroup.getRecords());
+            std::vector<Record> recs = records;
+            for (std::vector<Group>::const_iterator it=subgroups.begin(),endIt=subgroups.end(); it != endIt; ++it) {
+                std::vector<Record> g_recs = it->getRecords();
                 recs.insert(recs.end(), g_recs.begin(), g_recs.end());
             }
             return recs;
         }
 
         bool getRecordByID(uint32_t id, Record& outRecord) const {
-            std::vector<Record> recs(getRecords());
-            for (const auto &record : recs) {
-                if (record.id == id) {
-                    outRecord = record;
+            std::vector<Record> recs = getRecords();
+            for (std::vector<Record>::const_iterator it=recs.begin(),endIt=recs.end(); it != endIt; ++it) {
+                if (it->id == id) {
+                    outRecord = *it;
                     return true;
                 }
             }
